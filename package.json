@@ -2,12 +2,14 @@
   "name": "nodeexpressrestapi",
   "version": "1.0.0",
   "description": "This is a sample rest API developed by Amit Jain",
-  "private": true,
   "scripts": {
     "start": "node ./bin/www"
   },
-  "keywords": ["RESTFul","API"],
+  "main": "server.js",
   "dependencies": {
-    "express": "~4.15.2"
-  }
+    "express": "~4.0.0",
+    "mongoose": "~3.6.13",
+    "body-parser": "~1.0.1"
+  },
+  "keywords": ["RESTFul","API"]
 }
