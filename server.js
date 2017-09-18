@@ -60,12 +60,12 @@ router.route('/students')
 router.route('/students/:student_id')
 
         .get(function(req,res){
-            res.json({message:'get the student with id = '+req.params.student_id})
+            res.json({message:'get the student with id = '+req.params.student_id};
         })
 
         .put(function(req,res){
             res.json({message:'find and update student with id ='+req.params.student_id})
-        });
+        })
 
         .delete(function(req,res){
             res.json({message:'find and delete student with id ='+req.params.student_id})
