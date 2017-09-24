@@ -2,13 +2,13 @@
 
 
 /*
+/api/upload	                    POST	    Upload a file to ./uploads folder. (Form-type: "Form-Data", Key-Type: uploadFile)
 /api/students	                GET	        Get all the students.
 /api/students	                POST	    Create a student.
 /api/students/:student_id	    GET	        Get a single student.
 /api/students/:student_id	    PUT	        Update a student with new info.
 /api/students/:student_id	    DELETE	    Delete a student.
 */
-
 
 
 // BASE SETUP
@@ -18,18 +18,16 @@
 var express    = require('express');        // call express
 var app        = express();                 // define our app using express
 var bodyParser = require('body-parser');    // Body parser for JSON parsing
-var multer = require('multer');
+var fileUpload = require('express-fileupload');
 var util = require("util");
 var fs = require("fs"); // this is to upload a file to the server
 
 
-app.use(multer({dest:'./uploads/'}).single('zip'));
-// configure app to use bodyParser()
-// this will let us get the data from a POST
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(fileUpload());
 
-var port = process.env.PORT || 8080;        // set our port
+var port = process.env.PORT || 3000;        // set our port
 
 // ROUTES FOR OUR API
 // =============================================================================
@@ -44,34 +42,32 @@ router.use(function(req, res, next) {
     next(); // make sure we go to the next routes and don't stop here
 });
 
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, './uploads')
-    },
-    filename: function (req, file, cb) {
-        console.log(file,"amit")
-        cb(null, file.fieldname + '-' + Date.now())
-    }
-})
 
-var upload = multer({ storage: storage })
 
-// API for all students.
+
+
+//Upload API
+
 router.route('/upload')
 
     .post(function(req, res){
-        if (req.file) {
-           // console.log(util.inspect(req.file));
-            if (req.file.size === 0) return next(new Error("Hey, first would you select a file?"));
-            fs.exists(req.file.path, function(exists) {
-                if(exists) {
-                    res.end("Got your file!");
-                } else {
-                    res.end("Well, there is no magic for those who don’t believe in it!");
-                }
-            });
-        }
+
+        if (!req.files)
+            return res.status(400).json({ message :'No files were uploaded.'});
+
+        // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+        var uploadFile = req.files.uploadfile;
+
+        // Use the mv() method to place the file somewhere on your server
+        uploadFile.mv(__dirname+'/uploads/'+uploadFile.name, function(err) {
+            if (err)
+                return res.status(500).send(err);
+            res.json({ message :'File uploaded!'});
+        });
+
     });
+
+
 
 
 // API for all students.
